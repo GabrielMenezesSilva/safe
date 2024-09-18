@@ -11,11 +11,12 @@ import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from './Services/auth.service';  
 import { NavbarComponent } from './navbar/navbar.component';
+import { IonRouterOutlet, IonSplitPane, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonButtons, IonMenu, MenuController } from "@ionic/angular/standalone";
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [
+  imports: [IonButtons, IonList, IonContent, IonTitle, IonToolbar, IonHeader, IonSplitPane, IonRouterOutlet, IonMenu, 
     CommonModule,  
     MatSidenavModule,
     MatToolbarModule,
@@ -34,5 +35,9 @@ import { NavbarComponent } from './navbar/navbar.component';
 export class AppComponent {
   title = 'SMSNomades';
 
-  constructor(public authService: AuthService) {}
+  constructor(private menu: MenuController, public authService: AuthService) {}
+
+  closeMenu() {
+    this.menu.close();
+  }
 }

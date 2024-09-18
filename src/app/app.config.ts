@@ -12,6 +12,7 @@ import { getDatabase } from "@angular/fire/database";
 import { firebaseConfig } from "../environments/environment";
 import { provideFirestore } from "@angular/fire/firestore";
 import { getFirestore } from "firebase/firestore";
+import { provideIonicAngular } from '@ionic/angular/standalone';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -35,6 +36,6 @@ export const appConfig: ApplicationConfig = {
     provideAuth(() => getAuth()),
     provideDatabase(() => getDatabase()),
     provideAnimationsAsync(),
-    provideAnimationsAsync(),
+    provideAnimationsAsync(), provideIonicAngular({}),
   ],
 };

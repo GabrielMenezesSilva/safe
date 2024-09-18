@@ -1,65 +1,73 @@
-<h1>Mes enregistrements zoom côté administratif</h1>
-<!-- Titre principal de la page -->
-
-<div>
-  <h3>Ajouter un nouveau lien</h3>
-  <!-- Section pour ajouter un nouveau lien -->
-
-  <select [(ngModel)]="selectedFormacaoToAddLink">
-    <!-- Sélection de la formation pour laquelle ajouter un lien -->
-    <option value="">Sélectionner une formation</option>
-    <option *ngFor="let formacao of formacoes" [ngValue]="formacao">
-      {{ formacao.nome }}
-    </option>
-  </select>
-
-  <input type="text" [(ngModel)]="nouveauLien" placeholder="Entrez le lien" />
-  <!-- Champ de saisie pour le nouveau lien -->
-
-  <input
-    type="text"
-    [(ngModel)]="codigoAcesso"
-    placeholder="Entrez le code d'accès"
-  />
-  <!-- Champ de saisie pour le code d'accès -->
-
-  <input type="date" [(ngModel)]="data" placeholder="Entrez la date" />
-  <!-- Champ de saisie pour la date -->
-
-  <button (click)="ajouterLien()">Ajouter</button>
-  <!-- Bouton pour ajouter le lien -->
-</div>
-
-<div>
-  <h3>Enregistrements</h3>
-  <!-- Section pour afficher les enregistrements -->
-
-  <select [(ngModel)]="selectedFormacaoToShowAulas">
-    <!-- Sélection de la formation pour afficher les enregistrements -->
-    <option value="">Sélectionner une formation</option>
-    <option *ngFor="let formacao of formacoes" [ngValue]="formacao">
-      {{ formacao.nome }}
-    </option>
-  </select>
-
-  <div *ngIf="selectedFormacaoToShowAulas">
-    <!-- Affichage des enregistrements si une formation est sélectionnée -->
-    <h4>{{ selectedFormacaoToShowAulas.nome }}</h4>
-    <!-- Affichage du nom de la formation -->
-
-    <ul>
-      <li
-        *ngFor="
-          let enregistrement of selectedFormacaoToShowAulas.enregistrements
-        "
-      >
-        <!-- Boucle pour afficher chaque enregistrement -->
-        {{ enregistrement.nome }} -
-        <a [href]="enregistrement.link">{{ enregistrement.link }}</a>
-        <!-- Affichage du nom et du lien de l'enregistrement -->
-        <p>Code d'accès: {{ enregistrement.codigoAcesso }}</p>
-        <!-- Affichage du code d'accès de l'enregistrement -->
-      </li>
-    </ul>
-  </div>
-</div>
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Ajouter un nouveau cours</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-card>
+    <ion-card-content>
+      <ion-label position="floating">Sélectionnez une formation</ion-label>
+      <ion-item>
+        <ion-select class="ion-padding" [(ngModel)]="selectedFormacaoToAddLink" name="getFormacoes">
+          <!-- <ion-select-option value="">Sélectionnez une formation</ion-select-option> -->
+          <ion-select-option
+            *ngFor="let formacao of formacoes"
+            [value]="formacao"
+          >
+            {{ formacao.name }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+      <div>
+        <label>Entrez le lien</label>
+        <input class="padding" type="text" [(ngModel)]="novoLink">
+      </div>
+      <div>
+        <label>Entrez le code d'accès</label>
+        <input type="text" [(ngModel)]="codigoAcesso">
+      </div>
+      <div>
+        <label>Entrez la date</label>
+        <input class="padding" type="date" [(ngModel)]="data">
+      </div>
+      <button (click)="adicionarLink()">Ajouter</button>
+    </ion-card-content>
+  </ion-card>
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Enregistrements</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-label position="floating">Sélectionnez une formation</ion-label>
+      <ion-item>
+        <ion-select [(ngModel)]="selectedFormacaoToShowAulas" (ionChange)="getZooms()">
+          <!-- <ion-select-option value="">Sélectionnez une formation</ion-select-option> -->
+          <ion-select-option
+            *ngFor="let formacao of formacoes"
+            [value]="formacao"
+          >
+            {{ formacao.name }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+      <div *ngIf="zoomsToShowByFormation.length > 0">
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>{{ selectedFormacaoToShowAulas?.name }}</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-list>
+              <ion-item *ngFor="let zoom of zoomsToShowByFormation">
+                <ion-label>
+                  {{ zoom.formationStr }} -
+                  <a [href]="zoom.lien">{{ zoom.lien }}</a>
+                  <p>Code d'accès: {{ zoom.code }}</p>
+                </ion-label>
+              </ion-item>
+            </ion-list>
+          </ion-card-content>
+        </ion-card>
+      </div>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

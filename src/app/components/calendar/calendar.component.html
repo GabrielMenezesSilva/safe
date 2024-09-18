@@ -1,1 +1,25 @@
-<p>calendar works!</p>
+<div>
+    <form [formGroup]="formacaoForm">
+      <label for="formacao">Sélectionnez une formation:</label>
+      <select id="formacao" formControlName="formacao">
+        <option *ngFor="let formacao of formacoes" [value]="formacao.id">{{ formacao.nome }}</option>
+      </select>
+    </form>
+  
+    <div *ngIf="aulas.length > 0">
+      <h3>Cours pour la formation sélectionnée:</h3>
+      <ul>
+        <li *ngFor="let aula of aulas">
+          <strong>{{ aula.title }}</strong> - {{ aula.start }} à {{ aula.end }}<br>
+          <em>{{ aula.description }}</em><br>
+          <small>Professeur: {{ aula.extendedProps.professor }}</small>
+        </li>
+      </ul>
+    </div>
+    <div *ngIf="aulas.length === 0">
+      <p>Aucun cours trouvé pour la formation sélectionnée.</p>
+    </div>
+  </div>
+  <div class="calendar">
+    <full-calendar #calendar [options]="calendarOptions"></full-calendar>
+    </div>

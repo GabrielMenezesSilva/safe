@@ -1,4 +1,4 @@
-  .calendar {
-    width: 900px;
-    height: 900px;
-  }
+.my-swal-popup {
+  background-color:white !important; /* Cor de fundo do popup */
+  border-radius: 10px; /* Bordas arredondadas */
+}
