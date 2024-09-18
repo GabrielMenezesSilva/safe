@@ -6,11 +6,12 @@ import { FormacaoService } from '../create-zoom/formacao.service';
 import { Zoom } from '../../interfaces/zoom';
 import { DialogZoomComponent } from '../dialog-zoom/dialog-zoom.component';
 import { Formation } from '../../interfaces/formation';
+import { IonTitle, IonHeader, IonToolbar } from "@ionic/angular/standalone";
 
 @Component({
   selector: 'app-zoom',
   standalone: true,
-  imports: [CommonModule, FormsModule, ],
+  imports: [IonToolbar, IonHeader, IonTitle, CommonModule, FormsModule, ],
   templateUrl: './zoom.component.html',
   styleUrls: ['./zoom.component.css']
 })

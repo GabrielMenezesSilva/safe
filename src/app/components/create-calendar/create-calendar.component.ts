@@ -7,7 +7,7 @@ import {
 import { CalendarOptions } from "@fullcalendar/core";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import Swal from "sweetalert2"; // Adicione esta linha
+import Swal from "sweetalert2"; 
 import { CalendarService } from "../../Services/calendar.service";
 import {
   IonContent,
@@ -22,6 +22,7 @@ import {
   IonModal,
 } from "@ionic/angular/standalone";
 import { CommonModule } from "@angular/common";
+import { FirestoreModule } from "@angular/fire/firestore";
 
 @Component({
   selector: "app-create-calendar",
@@ -40,13 +41,20 @@ import { CommonModule } from "@angular/common";
     IonSelect,
     IonSelectOption,
     ReactiveFormsModule,
+    FirestoreModule,
   ],
   templateUrl: "./create-calendar.component.html",
   styleUrls: ["./create-calendar.component.css"],
 })
 export class CreateCalendarComponent implements OnInit {
+
+  // IDs dinâmicos para os ion-datetime
+  datetimeId1: string = this.generateUniqueId("datetime1");
+  datetimeId2: string = this.generateUniqueId("datetime2");
+
   @ViewChild("calendar") calendarComponent!: FullCalendarComponent;
   aulaForm: FormGroup;
+  formacaoSelected: any;
   calendarOptions: CalendarOptions = {
     initialView: "dayGridMonth",
     validRange: {
@@ -58,26 +66,23 @@ export class CreateCalendarComponent implements OnInit {
     unselectAuto: true,
     selectMirror: true,
     longPressDelay: 100,
+    height: "auto",
     locale: "fr",
     timeZone: "UTC",
     eventResizableFromStart: true,
-    editable: true, // Permitir que outros eventos sejam editáveis
+    editable: true, 
     eventDurationEditable: true,
     droppable: true,
 
-    // Adicionando eventos de feriados
-    events: [], // Inicialmente vazio, será preenchido no ngOnInit
+    events: [], 
 
-    // Função para criação de eventos
     select: this.onSelect.bind(this),
 
-    // Função para deletar eventos
     eventClick: this.onEventClick.bind(this),
   };
 
   formacoes: any[] = [];
 
-  // Lista de feriados na Suíça para 2024
   feriados = [
     { title: "Nouvel An", date: "2024-01-01" },
     { title: "Vendredi Saint", date: "2024-03-29" },
@@ -138,13 +143,24 @@ export class CreateCalendarComponent implements OnInit {
       ...this.feriados.map((feriado) => ({
         title: feriado.title,
         date: feriado.date,
-        editable: false, // Define os feriados como não editáveis
-        allDay: true, // Assume que todos os feriados são eventos de dia inteiro
+        editable: false, 
+        allDay: true, 
       })),
-    ]; // Adiciona os feriados à lista de eventos
+    ];
   }
 
-  // Método de criação de eventos
+  // Função para gerar IDs únicos para os componentes ion-datetime
+  generateUniqueId(prefix: string): string {
+    return `${prefix}-${Math.random().toString(36).substring(2, 15)}`;
+  }
+
+  // Hook Ionic chamado quando está prestes a sair da página
+  ionViewWillLeave() {
+    // Limpa os IDs e os recria para garantir que sejam únicos ao retornar
+    this.datetimeId1 = this.generateUniqueId("datetime1");
+    this.datetimeId2 = this.generateUniqueId("datetime2");
+  }
+
   onSelect(info: any) {
     Swal.fire({
       title: "Créer un nouvel événement?",
@@ -156,10 +172,10 @@ export class CreateCalendarComponent implements OnInit {
       confirmButtonText: "Oui, créez-le!",
       heightAuto: false,
       cancelButtonText: "Non, retour",
-      width: "400px", // Ajuste o tamanho da largura conforme necessário
-      padding: "1em", // Ajuste o padding para evitar áreas em branco
+      width: "400px",
+      padding: "1em",
       customClass: {
-        popup: "my-swal-popup", // Classe CSS para estilizar o popup, se necessário
+        popup: "my-swal-popup",
       },
     }).then((result) => {
       if (result.value) {
@@ -179,16 +195,14 @@ export class CreateCalendarComponent implements OnInit {
     });
   }
 
-  // Método de exclusão de eventos
   onEventClick(info: any) {
-    // Verifica se o evento é um feriado
     if (this.feriados.some((feriado) => feriado.date === info.event.startStr)) {
       Swal.fire({
         text: "C'est un jour férié et il ne peut pas être supprimé.",
         icon: "warning",
         heightAuto: false,
       });
-      return; // Não permite a exclusão
+      return;
     }
 
     Swal.fire({
@@ -218,42 +232,56 @@ export class CreateCalendarComponent implements OnInit {
       formacao: novaAula.formacao,
     };
 
-    // Adicionar o evento ao calendário
     this.calendarService.addAulaToFormacao(novaAula.formacao, event);
     this.loadAulas(novaAula.formacao);
 
-    // Atualizar o validRange do FullCalendar com base nos valores do formulário
     const calendarApi = this.calendarComponent.getApi();
     this.calendarOptions.validRange = {
       start: novaAula.horaInicio,
       end: novaAula.horaFim,
     };
 
-    // Atualizar o calendário para aplicar as mudanças
     calendarApi.setOption("validRange", this.calendarOptions.validRange);
     calendarApi.render();
   }
 
-  loadAulas(formacaoId: string) {
+  loadAulas(formacaoId: any) {
+    this.formacaoSelected = formacaoId.id;
     this.calendarService.getAulasByFormacao(formacaoId).subscribe((aulas) => {
       this.calendarOptions.events = aulas;
     });
   }
 
-  // Método para enviar todas as aulas para o localStorage e redirecionar para a página de visualização
   send() {
     const calendarApi = this.calendarComponent.getApi();
     const events = calendarApi.getEvents();
-    localStorage.setItem("events", JSON.stringify(events));
+
+    const calendarEvents = JSON.parse(
+      localStorage.getItem("events")?.toString() || "[]"
+    );
+
+    let evento = JSON.stringify(events);
+    let evento2 = JSON.parse(evento);
+    evento2.forEach((element: any) => {
+      element.idFormation = this.formacaoSelected;
+    });
+    calendarEvents.push(...evento2);
+
+    localStorage.setItem("events", JSON.stringify(calendarEvents));
     const { plugins, select, eventClick, editable, selectable, ...config } =
       this.calendarOptions;
     localStorage.setItem("calendarOptions", JSON.stringify(config));
-    const data = {
-      events, 
-      config,
-      idFormation: this.aulaForm.value.formacao,
-    }
-    // ajouter ici la logique pour ajouter "data" dans la colelction "calendar"
 
+    console.log("events", events);
+    console.log("config", config);
+
+    this.calendarOptions.events = [
+      ...this.feriados.map((feriado) => ({
+        title: feriado.title,
+        date: feriado.date,
+        editable: false, 
+        allDay: true, 
+      })),
+    ];
   }
 }

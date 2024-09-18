@@ -1,11 +1,15 @@
-<h1>Links das aulas para os alunos</h1>
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Links das aulas para os alunos</ion-title>
+  </ion-toolbar>
+</ion-header>
 
 <div>
   <h2>Escolha uma formação</h2>
   <select [(ngModel)]="selectedFormacaoToShowAulas" (change)="selectFormacao()">
     <option value="">Selecione uma formação</option>
     <option *ngFor="let formation of formations" [ngValue]="formation">
-      {{formation.name }}
+      {{ formation.name }}
     </option>
   </select>
 </div>

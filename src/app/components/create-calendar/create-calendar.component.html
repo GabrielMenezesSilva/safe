@@ -7,6 +7,7 @@
     <ion-item>
       <ion-select
         id="formacao"
+        placeholder="Choisissez une formation"
         formControlName="formacao"
         (ionChange)="loadAulas($event.detail.value)"
       >
@@ -28,19 +29,21 @@
     <!-- Professeur -->
     <ion-label position="floating">Professeur :</ion-label>
     <ion-item>
-      <ion-input id="professor" formControlName="professor"></ion-input>
+      <ion-input id="professor" formControlName="professor"
+      placeholder="Nom du professeur"
+      ></ion-input>
     </ion-item>
 
     <!-- Data de Início -->
     <ion-label position="floating">Date Debut :</ion-label>
     <ion-item>
-      <ion-datetime-button datetime="datetime1"></ion-datetime-button>
+      <ion-datetime-button [datetime]='{datetimeId1}'></ion-datetime-button>
     </ion-item>
     <ion-modal [keepContentsMounted]="true">
       <ng-template>
         <!-- Captura apenas a data -->
         <ion-datetime
-          id="datetime1"
+          [id]='{datetimeId1}'
           presentation="date"
           formControlName="dataInicio"
           formControlName="horaInicio"
@@ -51,13 +54,13 @@
     <!-- Data de Fim -->
     <ion-label position="floating">Date fin :</ion-label>
     <ion-item>
-      <ion-datetime-button datetime="datetime2"></ion-datetime-button>
+      <ion-datetime-button [datetime]='{datetimeId2}'></ion-datetime-button>
     </ion-item>
     <ion-modal [keepContentsMounted]="true">
       <ng-template>
         <!-- Captura apenas a data -->
         <ion-datetime
-          id="datetime2"
+          [id]="datetimeId2"
           presentation="date"
           formControlName="dataFim"
           formControlName="horaFim"

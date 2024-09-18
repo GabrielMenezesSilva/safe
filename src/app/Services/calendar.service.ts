@@ -20,21 +20,21 @@ export class CalendarService {
   constructor() {
     // Inicializar com dados de exemplo
     this.formacoesSubject.next([
-      { id: 1, nome: "Web Designer (WD)", enregistrements: [] },
-      { id: 2, nome: "Web Programmer (WPr)", enregistrements: [] },
+      { id: "WD", nome: "Web Designer (WD)", enregistrements: [] },
+      { id: "WPR", nome: "Web Programmer (WPr)", enregistrements: [] },
       {
-        id: 3,
+        id: 'MWAD',
         nome: "Mobile Web Application Developer (MWAD)",
         enregistrements: [],
       },
-      { id: 4, nome: "Python Software Engineer(PSE)", enregistrements: [] },
-      { id: 5, nome: "Data Analysis (PDA)", enregistrements: [] },
+      { id: "PSE", nome: "Python Software Engineer(PSE)", enregistrements: [] },
+      { id: "PDA", nome: "Data Analysis (PDA)", enregistrements: [] },
       {
-        id: 6,
+        id: "DAF",
         nome: "Data Science pour la Finance (DAF)",
         enregistrements: [],
       },
-      { id: 7, nome: "Digital Marketing (DMM)", enregistrements: [] },
+      { id: "DMM", nome: "Digital Marketing (DMM)", enregistrements: [] },
     ]);
 
     this.datesSubject.next({

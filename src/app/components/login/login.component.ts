@@ -1,37 +1,54 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
 import { AuthService } from '../../Services/auth.service';
+import { Router } from '@angular/router';
+import { IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule],
+  imports:[FormsModule, CommonModule, IonicModule],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
   email: string = '';
   password: string = '';
-  selectedRole: 'admin' | 'user' = 'user';
+  errorMessage: string = '';
+  toastMessage: string = ''; // Për mesazhin e toast
+  isToastOpen: boolean = false; // Për gjendjen e toast
 
   constructor(private authService: AuthService, private router: Router) {}
 
-  onSubmit(event: Event) {
-    event.preventDefault();
+  async onLogin() {
+    try {
+      // Appel du service d'authentification pour se connecter
+      await this.authService.login(this.email, this.password);
 
-    // Simule la connexion en fonction du rôle sélectionné
-    this.authService.login(this.selectedRole);
-
-    if (this.authService.isAuthenticated()) {
-      // Redirige en fonction du rôle
+      // Après connexion réussie, rediriger en fonction du rôle
       if (this.authService.isAdmin()) {
-        this.router.navigate(['/createUser']); // Redirige l'admin vers la page admin par exemple
+        this.router.navigate(['/createUser']);
       } else if (this.authService.isUser()) {
-        this.router.navigate(['/user']); // Redirige l'utilisateur vers la page utilisateur
+        this.router.navigate(['/user']);
+      } else {
+        this.errorMessage = 'Unknown role. Please contact support.';
       }
-    } else {
-      alert('Invalid login credentials!');
+
+    } catch (error) {
+      this.showToast('Connexion échouée. Veuillez vérifier vos informations.'); // Mesazh në frëngjisht
+      console.error('Login error:', error);
     }
+  }
+
+  // Funksioni për të shfaqur toast
+  showToast(message: string) {
+    this.toastMessage = message;
+    this.isToastOpen = true;
+  }
+
+  // Funksioni për të mbyllur toast kur përfundon
+  closeToast() {
+    this.isToastOpen = false;
   }
 }

@@ -1,38 +1,50 @@
-<mat-sidenav-container class="sidenav-container">
-  <mat-sidenav #sidenav mode="over" class="sidenav">
-    <mat-nav-list>
-      <a mat-list-item routerLink="/login" routerLinkActive="active" (click)="sidenav.close()">Login</a>
-      
-      <!-- Affiche uniquement si l'utilisateur est admin -->
-      <ng-container *ngIf="authService.isAdmin()">
-        <a mat-list-item routerLink="/createUser" routerLinkActive="active" (click)="sidenav.close()">Create User</a>
-        <a mat-list-item routerLink="/createChat" routerLinkActive="active" (click)="sidenav.close()">Create Chat</a>
-        <a mat-list-item routerLink="/createCalendar" routerLinkActive="active" (click)="sidenav.close()">Create Calendar</a>
-        <a mat-list-item routerLink="/createZoom" routerLinkActive="active" (click)="sidenav.close()">Create Zoom</a>
-      </ng-container>
-      
-      <!-- Affiche pour les utilisateurs -->
-      <ng-container *ngIf="authService.isUser()">
-        <a mat-list-item routerLink="/user" routerLinkActive="active" (click)="sidenav.close()">User</a>
-        <a mat-list-item routerLink="/chat" routerLinkActive="active" (click)="sidenav.close()">Chat</a>
-        <a mat-list-item routerLink="/zoom" routerLinkActive="active" (click)="sidenav.close()">Zoom</a>
-        <a mat-list-item routerLink="/calendar" routerLinkActive="active" (click)="sidenav.close()">Calendar</a>
-      </ng-container>
-    </mat-nav-list>
-  </mat-sidenav>
+<ion-app>
+  <!-- Menu latéral -->
+  <ion-menu side="start" menuId="first" contentId="main-content">
+    <ion-header>
+      <ion-toolbar color="primary">
+        <ion-title>Menu</ion-title>
+      </ion-toolbar>
+    </ion-header>
 
-  <mat-sidenav-content>
-    <mat-toolbar color="primary">
-      <button mat-icon-button (click)="sidenav.toggle()">
-        <mat-icon>menu</mat-icon>
-      </button>
-    </mat-toolbar>
+    <ion-content>
+      <ion-list>
+        <!-- Lien pour la page de login -->
+        <ion-item routerLink="/login" routerLinkActive="active" (click)="closeMenu()">Login</ion-item>
 
-    <!-- Contenu principal -->
+        <!-- Afficher uniquement si l'utilisateur est admin -->
+        <ng-container *ngIf="authService.isAdmin()">
+          <ion-item routerLink="/createUser" routerLinkActive="active" (click)="closeMenu()">Create User</ion-item>
+          <ion-item routerLink="/createChat" routerLinkActive="active" (click)="closeMenu()">Create Chat</ion-item>
+          <ion-item routerLink="/createCalendar" routerLinkActive="active" (click)="closeMenu()">Create Calendar</ion-item>
+          <ion-item routerLink="/createZoom" routerLinkActive="active" (click)="closeMenu()">Create Zoom</ion-item>
+        </ng-container>
+
+        <!-- Afficher uniquement pour les utilisateurs normaux -->
+        <ng-container *ngIf="authService.isUser()">
+          <ion-item routerLink="/user" routerLinkActive="active" (click)="closeMenu()">User</ion-item>
+          <ion-item routerLink="/chat" routerLinkActive="active" (click)="closeMenu()">Chat</ion-item>
+          <ion-item routerLink="/zoom" routerLinkActive="active" (click)="closeMenu()">Zoom</ion-item>
+          <ion-item routerLink="/calendar" routerLinkActive="active" (click)="closeMenu()">Calendar</ion-item>
+          <ion-item routerLink="/evaluation" routerLinkActive="active" (click)="closeMenu()">Evaluation</ion-item>
+        </ng-container>
+            <!-- Lien de déconnexion (visible pour tous les utilisateurs) -->
+            <ion-item (click)="authService.logout()" (click)="closeMenu()">Logout</ion-item>
+          </ion-list>
+        </ion-content>
+      </ion-menu>
     
-
-
-    <router-outlet></router-outlet>
-    <!-- <ion-router-outlet/> -->
-  </mat-sidenav-content>
-</mat-sidenav-container>
+      <!-- Contenu principal de l'application -->
+      <div class="ion-page" id="main-content">
+    
+          <ion-toolbar>
+            <ion-buttons slot="start">
+              <ion-menu-button></ion-menu-button> <!-- Bouton pour ouvrir le menu -->
+            </ion-buttons>
+    
+          </ion-toolbar>
+          <ion-content>
+            <router-outlet></router-outlet> <!-- Zone où le contenu sera chargé -->
+          </ion-content>
+        </div>
+      </ion-app>

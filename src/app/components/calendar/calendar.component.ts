@@ -16,6 +16,7 @@ import {
   IonContent,
   IonSelect,
 } from "@ionic/angular/standalone";
+import { consumerPollProducersForChange } from "@angular/core/primitives/signals";
 
 @Component({
   standalone: true,
@@ -64,18 +65,27 @@ export class CalendarComponent implements OnInit {
     this.calendarService.getAulasByFormacao(formacaoId).subscribe((aulas) => {
       this.aulas = aulas;
 
-      const calendarConfig = localStorage.getItem("calendarOptions");
-      const calendarEvents = localStorage.getItem("events");
+      let calendarConfig = localStorage.getItem("calendarOptions");
+      let calendarEvents = localStorage.getItem("events");
       console.log(calendarConfig);
       console.log(calendarEvents);
 
-      // Atualizar as opções do calendário com os eventos carregados
-      this.calendarOptions = {
-        initialView: "dayGridMonth",
-        plugins: [dayGridPlugin, interactionPlugin],
-        ...JSON.parse(calendarConfig || "{}"),
-        events: JSON.parse(calendarEvents || "[]"), // Carregar os eventos no calendário
-      };
+      if (calendarEvents) {
+        let event = JSON.parse(calendarEvents);
+        if(event.length > 0) {
+          event = event.filter((event: any) => event.idFormation === formacaoId);
+          calendarEvents = JSON.stringify(event);
+        } 
+
+        console.log(calendarEvents);
+        // Atualizar as opções do calendário com os eventos carregados
+        this.calendarOptions = {
+          initialView: "dayGridMonth",
+          plugins: [dayGridPlugin, interactionPlugin],
+          ...JSON.parse(event?.length == 0 ? "{}" : calendarConfig || "{}"),
+          events: JSON.parse(calendarEvents || "[]"), // Carregar os eventos no calendário
+        };
+      }
     });
   }
 }
