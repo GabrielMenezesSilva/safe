@@ -1,18 +1,17 @@
 <ion-content class="ion-padding">
-  <h1>Calendriers de formation</h1>
-
+  <h1>Calendário de Formação</h1>
   <!-- Formulário para adicionar uma nova aula -->
   <form [formGroup]="aulaForm" (ngSubmit)="adicionarAula()">
     
     <!-- Seleção da formação -->
     <ion-item>
       <ion-label position="floating">Formação:</ion-label>
-      <ion-select id="formacao" formControlName="formacao">
+      <ion-select id="formacao" formControlName="formacao" (ionChange)="loadAulas($event.detail.value)">
         <ion-select-option
           *ngFor="let formacao of formacoes"
-          [value]="formacao.nome"
+          [value]="formacao"   
         >
-          {{ formacao.nome }}
+          {{ formacao.nome }} <!-- Exibe o nome da formação -->
         </ion-select-option>
       </ion-select>
     </ion-item>
@@ -70,6 +69,7 @@
       Adicionar Aula
     </ion-button>
   </form>
+
   <!-- FullCalendar -->
   <div class="calendar">
     <full-calendar #calendar [options]="calendarOptions"></full-calendar>

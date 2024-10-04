@@ -1,9 +1,5 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
-import {
-  FormGroup,
-  FormBuilder,
-  ReactiveFormsModule,
-} from "@angular/forms";
+import { FormGroup, FormBuilder, ReactiveFormsModule } from "@angular/forms";
 import {
   FullCalendarComponent,
   FullCalendarModule,
@@ -53,11 +49,15 @@ export class CreateCalendarComponent implements OnInit {
   aulaForm: FormGroup;
   calendarOptions: CalendarOptions = {
     initialView: "dayGridMonth",
+    validRange: {
+      start: "2024-10-01",
+      end: "2024-10-20",
+    },
     plugins: [dayGridPlugin, interactionPlugin],
     selectable: true,
     unselectAuto: true,
     selectMirror: true,
-    themeSystem: "bootstrap",
+    longPressDelay: 100,
 
     // Função para criação de eventos
     select: this.onSelect.bind(this),
@@ -119,10 +119,10 @@ export class CreateCalendarComponent implements OnInit {
       confirmButtonText: "Yes, create it!",
       heightAuto: false,
       cancelButtonText: "No, return",
-      width: '400px', // Ajuste o tamanho da largura conforme necessário
-      padding: '1em', // Ajuste o padding para evitar áreas em branco
+      width: "400px", // Ajuste o tamanho da largura conforme necessário
+      padding: "1em", // Ajuste o padding para evitar áreas em branco
       customClass: {
-        popup: 'my-swal-popup', // Classe CSS para estilizar o popup, se necessário
+        popup: "my-swal-popup", // Classe CSS para estilizar o popup, se necessário
       },
     }).then((result) => {
       if (result.value) {
@@ -159,6 +159,8 @@ export class CreateCalendarComponent implements OnInit {
   }
 
   adicionarAula() {
+    console.log(this.aulaForm.value);
+
     const novaAula = this.aulaForm.value;
     const event = {
       title: novaAula.titulo,
@@ -169,8 +171,20 @@ export class CreateCalendarComponent implements OnInit {
       formacao: novaAula.formacao,
     };
 
+    // Adicionar o evento ao calendário
     this.calendarService.addAulaToFormacao(novaAula.formacao, event);
     this.loadAulas(novaAula.formacao);
+
+    // Atualizar o validRange do FullCalendar com base nos valores do formulário
+    const calendarApi = this.calendarComponent.getApi();
+    this.calendarOptions.validRange = {
+      start: novaAula.dataInicio,
+      end: novaAula.dataFim,
+    };
+
+    // Atualizar o calendário para aplicar as mudanças
+    calendarApi.setOption('validRange', this.calendarOptions.validRange);
+    calendarApi.render();
   }
 
   loadAulas(formacaoId: string) {
