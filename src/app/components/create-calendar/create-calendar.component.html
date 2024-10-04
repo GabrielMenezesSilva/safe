@@ -37,13 +37,13 @@
     <!-- Data de Início -->
     <ion-label position="floating">Date Debut :</ion-label>
     <ion-item>
-      <ion-datetime-button [datetime]='{datetimeId1}'></ion-datetime-button>
+      <ion-datetime-button datetime="datetime1"></ion-datetime-button>
     </ion-item>
     <ion-modal [keepContentsMounted]="true">
       <ng-template>
         <!-- Captura apenas a data -->
         <ion-datetime
-          [id]='{datetimeId1}'
+          id="datetime1"
           presentation="date"
           formControlName="dataInicio"
           formControlName="horaInicio"
@@ -54,13 +54,13 @@
     <!-- Data de Fim -->
     <ion-label position="floating">Date fin :</ion-label>
     <ion-item>
-      <ion-datetime-button [datetime]='{datetimeId2}'></ion-datetime-button>
+      <ion-datetime-button datetime="datetime2"></ion-datetime-button>
     </ion-item>
     <ion-modal [keepContentsMounted]="true">
       <ng-template>
         <!-- Captura apenas a data -->
         <ion-datetime
-          [id]="datetimeId2"
+          id="datetime2"
           presentation="date"
           formControlName="dataFim"
           formControlName="horaFim"
