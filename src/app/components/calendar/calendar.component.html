@@ -1,10 +1,12 @@
 <div>
-    <form [formGroup]="formacaoForm">
-      <label for="formacao">Sélectionnez une formation:</label>
-      <select id="formacao" formControlName="formacao">
-        <option *ngFor="let formacao of formacoes" [value]="formacao.id">{{ formacao.nome }}</option>
-      </select>
-    </form>
+    <div>
+      <form [formGroup]="formacaoForm">
+        <label for="formacao">Sélectionnez une formation:</label>
+        <select id="formacao" formControlName="formacao">
+          <option *ngFor="let formacao of formacoes" [value]="formacao.id">{{ formacao.nome }}</option>
+        </select>
+      </form>
+    </div>
   
     <div *ngIf="aulas.length > 0">
       <h3>Cours pour la formation sélectionnée:</h3>

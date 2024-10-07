@@ -58,6 +58,13 @@ export class CreateCalendarComponent implements OnInit {
     unselectAuto: true,
     selectMirror: true,
     longPressDelay: 100,
+    locale: "fr",
+    timeZone: "UTC",
+    eventResizableFromStart: true,
+    editable: true,
+    eventDurationEditable: true,
+    droppable: true,
+    
 
     // Função para criação de eventos
     select: this.onSelect.bind(this),
@@ -75,10 +82,10 @@ export class CreateCalendarComponent implements OnInit {
     this.aulaForm = this.fb.group({
       titulo: [""],
       descricao: [""],
-      dataInicio: [""],
-      dataFim: [""],
-      horaInicio: [""],
-      horaFim: [""],
+      dataInicio: [],
+      dataFim: [],
+      horaInicio: [],
+      horaFim: [],
       professor: [""],
       formacao: [""],
     });
@@ -109,6 +116,8 @@ export class CreateCalendarComponent implements OnInit {
 
   // Método de criação de eventos
   onSelect(info: any) {
+
+    
     Swal.fire({
       title: "Create new event?",
       html: `
@@ -141,7 +150,7 @@ export class CreateCalendarComponent implements OnInit {
       }
     });
   }
-
+  
   // Método de exclusão de eventos
   onEventClick(info: any) {
     Swal.fire({
@@ -156,6 +165,7 @@ export class CreateCalendarComponent implements OnInit {
         info.event.remove();
       }
     });
+    
   }
 
   adicionarAula() {
@@ -178,8 +188,8 @@ export class CreateCalendarComponent implements OnInit {
     // Atualizar o validRange do FullCalendar com base nos valores do formulário
     const calendarApi = this.calendarComponent.getApi();
     this.calendarOptions.validRange = {
-      start: novaAula.dataInicio,
-      end: novaAula.dataFim,
+      start: novaAula.horaInicio,
+      end: novaAula.horaFim,
     };
 
     // Atualizar o calendário para aplicar as mudanças
