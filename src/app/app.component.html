@@ -10,7 +10,7 @@
     <ion-content>
       <ion-list>
         <!-- Lien pour la page de login -->
-        <ion-item routerLink="/login" routerLinkActive="active" (click)="closeMenu()">Login</ion-item>
+        <!-- <ion-item routerLink="/login" routerLinkActive="active" (click)="closeMenu()">Login</ion-item> -->
 
         <!-- Afficher uniquement si l'utilisateur est admin -->
         <ng-container *ngIf="authService.isAdmin()">

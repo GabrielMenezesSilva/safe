@@ -1,27 +1,58 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>Links das aulas para os alunos</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content>
+  <ion-grid>
+    <ion-row>
+      <ion-col size="12">
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>Escolha uma formação</ion-card-title>
+          </ion-card-header>
 
-<div>
-  <h2>Escolha uma formação</h2>
-  <select [(ngModel)]="selectedFormacaoToShowAulas" (change)="selectFormacao()">
-    <option value="">Selecione uma formação</option>
-    <option *ngFor="let formation of formations" [ngValue]="formation">
-      {{ formation.name }}
-    </option>
-  </select>
-</div>
+          <ion-card-content>
+            <ion-item>
+              <ion-label>Selecione uma formação</ion-label>
+              <ion-select [(ngModel)]="selectedFormacaoToShowAulas" (ionChange)="selectFormacao()">
+                <ion-select-option *ngFor="let formation of formations" [value]="formation">
+                  {{ formation.name }}
+                </ion-select-option>
+              </ion-select>
+            </ion-item>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
 
-<div *ngIf="selectedFormacaoToShowAulas">
-  <h3>Links para {{ selectedFormacaoToShowAulas.name }}</h3>
-  <ul>
-    <li *ngFor="let zoom of zoomsToShowByFormation">
-      <h4>{{ zoom.formationStr }}</h4>
-      <button (click)="openDialog(zoom.lien)">Assistir</button>
-      <p>Código de Acesso: {{ zoom.code }}</p>
-      <p>Data: {{ zoom.date }}</p>
-    </li>
-  </ul>
-</div>
+    <ion-row *ngIf="selectedFormacaoToShowAulas">
+      <ion-col size="12">
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>Links para {{ selectedFormacaoToShowAulas.name }}</ion-card-title>
+          </ion-card-header>
+
+          <ion-card-header>
+            <ion-card-title>Links para {{ selectedFormacaoToShowAulas.name }}</ion-card-title>
+          </ion-card-header>
+          
+          <ion-card-content>
+            <ion-list>
+              <ion-item *ngFor="let zoom of zoomsToShowByFormation">
+                <ion-label>
+                  <h2>{{ zoom.formationStr }}</h2>
+                  <p>
+                    Código de Acesso: {{ zoom.code }}
+                    <!-- O botão de cópia só será mostrado se o código de acesso estiver definido -->
+                    <ion-button size="small" *ngIf="zoom.code" (click)="copyToClipboard(zoom.code!)">
+                      <ion-icon slot="icon-only" name="copy-outline"></ion-icon>
+                    </ion-button>
+                  </p>
+                  <p>Data: {{ zoom.date }}</p>
+                </ion-label>
+                <ion-button fill="outline" (click)="openDialog(zoom.lien)">
+                  Assistir
+                </ion-button>
+              </ion-item>
+            </ion-list>
+          </ion-card-content>        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

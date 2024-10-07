@@ -11,7 +11,7 @@ import {
   where,
   query,
 } from "@angular/fire/firestore";
-import { Observable, from, map } from "rxjs";
+import { Observable, firstValueFrom, from, map } from "rxjs";
 import { Formation } from "../../interfaces/formation";
 // import { Calendar } from "@fullcalendar/core/index.js";
 
@@ -20,7 +20,10 @@ import { Formation } from "../../interfaces/formation";
 })
 export class FireCalendarService {
   private formationCollection: CollectionReference;
-    calendarCollection: CollectionReference<import("@angular/fire/firestore").DocumentData, import("@angular/fire/firestore").DocumentData>;
+  calendarCollection: CollectionReference<
+    import("@angular/fire/firestore").DocumentData,
+    import("@angular/fire/firestore").DocumentData
+  >;
 
   constructor(private firestore: Firestore) {
     // Inicialização das referências para as coleções do Firestore
@@ -36,12 +39,23 @@ export class FireCalendarService {
   }
   // Método para adicionar a const "data" (events, config e idFormation: this.aulaForm.value.formacao) à coleção 'calendar' ligada ao ID da formação
 
-  addCalendar(id: string, data: any): Observable<void> {
+  async addCalendar(data: any): Promise<void> {
     // Cria um documento com o ID da formação na coleção 'calendar', com o nome da formação
-    const calendarDoc = doc(this.calendarCollection, id);
+    const calendarDoc = doc(this.calendarCollection, Date.now().toString());
     // Adiciona os dados da formação ao documento criado
-    return from(setDoc(calendarDoc, data));
+    return await setDoc(calendarDoc, data);
   }
 
-
+  async getCalendarOptions(formacaoId: string): Promise<any> {
+    const list = (await firstValueFrom(
+      collectionData(this.calendarCollection)
+    )) as any[];
+    const calendar = list.find((item) => item.idFormation === formacaoId);
+    if (!calendar) {
+      throw new Error("Calendar not found");
     }
+    console.log("calendar", calendar);
+    
+    return calendar.config;
+  }
+}

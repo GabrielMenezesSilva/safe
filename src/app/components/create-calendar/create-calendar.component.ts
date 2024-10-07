@@ -226,8 +226,8 @@ export class CreateCalendarComponent implements OnInit {
     const novaAula = this.aulaForm.value;
     const event = {
       title: novaAula.titulo,
-      start: `${novaAula.dataInicio}T${novaAula.horaInicio}`,
-      end: `${novaAula.dataFim}T${novaAula.horaFim}`,
+      start: `${novaAula.horaInicio}`,
+      end: `${novaAula.horaFim}`,
       description: novaAula.descricao,
       professor: novaAula.professor,
       formacao: novaAula.formacao,
@@ -257,15 +257,19 @@ export class CreateCalendarComponent implements OnInit {
   }
 
   // Método para enviar todas as aulas para o localStorage e redirecionar para a página de visualização
-  send() {
+  async send() {
     const calendarApi = this.calendarComponent.getApi();
     const events = calendarApi.getEvents();
-    
-    const calendarEvents = JSON.parse(localStorage.getItem("events")?.toString() || "[]");
+
+    const calendarEvents = JSON.parse(
+      localStorage.getItem("events")?.toString() || "[]"
+    );
 
     let evento = JSON.stringify(events);
     let evento2 = JSON.parse(evento);
-    evento2.forEach((element: any) => { element.idFormation = this.formacaoSelected; });
+    evento2.forEach((element: any) => {
+      element.idFormation = this.formacaoSelected;
+    });
     calendarEvents.push(...evento2);
 
     console.log("calendarEvents", calendarEvents);
@@ -274,19 +278,19 @@ export class CreateCalendarComponent implements OnInit {
       this.calendarOptions;
     localStorage.setItem("calendarOptions", JSON.stringify(config));
 
-
     console.log("events", events);
     console.log("config", config);
-    
-    
+    console.log(this.calendarOptions);
+
     const data = {
-      events,
       config,
-      idFormation: this.aulaForm.value.formacao,
+      idFormation: this.aulaForm.value.formacao.id,
     };
-    this.fireCalendarService
-      .addCalendar(Date.now().toString(), data)
-      .subscribe(() => {console.log("aula add");
-      });
+    console.log("data", data);
+
+    await this.fireCalendarService.addCalendar(data);
+    //update the calendar
+    this.calendarOptions.events = [];
+    // this.calendarOptions.validRange =
   }
 }

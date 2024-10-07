@@ -17,6 +17,7 @@ import {
   IonSelect,
 } from "@ionic/angular/standalone";
 import { consumerPollProducersForChange } from "@angular/core/primitives/signals";
+import { FireCalendarService } from "../create-calendar/fireCalendar.service";
 
 @Component({
   standalone: true,
@@ -39,10 +40,14 @@ export class CalendarComponent implements OnInit {
   formacaoForm: FormGroup;
   formacoes: any[] = [];
   aulas: any[] = [];
-  calendarOptions: CalendarOptions | undefined;
+  calendarOptions: CalendarOptions | undefined = {
+    initialView: "dayGridMonth",
+    plugins: [dayGridPlugin, interactionPlugin],
+  }
   constructor(
     private fb: FormBuilder,
-    private calendarService: CalendarService
+    private calendarService: CalendarService,
+    private fireCalendarService: FireCalendarService
   ) {
     this.formacaoForm = this.fb.group({
       formacao: [""],
@@ -50,6 +55,10 @@ export class CalendarComponent implements OnInit {
   }
 
   ngOnInit() {
+    setTimeout(() => {
+      this.calendarComponent.getApi().render();
+    }, 250);
+
     this.calendarService
       .getFormacoes()
       .subscribe((formacoes) => (this.formacoes = formacoes));
@@ -61,31 +70,49 @@ export class CalendarComponent implements OnInit {
     });
   }
 
-  loadAulas(formacaoId: string) {
-    this.calendarService.getAulasByFormacao(formacaoId).subscribe((aulas) => {
-      this.aulas = aulas;
+  async loadAulas(formacaoId: string) {
+    this.calendarService
+      .getAulasByFormacao(formacaoId)
+      .subscribe(async (aulas) => {
+        this.aulas = aulas;
+        // Recupera as opções do calendário do fireCalendarService
 
-      let calendarConfig = localStorage.getItem("calendarOptions");
-      let calendarEvents = localStorage.getItem("events");
-      console.log(calendarConfig);
-      console.log(calendarEvents);
+        const option = await this.fireCalendarService.getCalendarOptions(
+          formacaoId
+        );
+        console.log("option", option);
+        
 
-      if (calendarEvents) {
-        let event = JSON.parse(calendarEvents);
-        if(event.length > 0) {
-          event = event.filter((event: any) => event.idFormation === formacaoId);
-          calendarEvents = JSON.stringify(event);
-        } 
-
-        console.log(calendarEvents);
-        // Atualizar as opções do calendário com os eventos carregados
+        // let calendarConfig = localStorage.getItem("calendarOptions");
+        // let calendarEvents = localStorage.getItem("events");
+        // console.log(calendarConfig);
+        // console.log(calendarEvents);
         this.calendarOptions = {
           initialView: "dayGridMonth",
           plugins: [dayGridPlugin, interactionPlugin],
-          ...JSON.parse(event?.length == 0 ? "{}" : calendarConfig || "{}"),
-          events: JSON.parse(calendarEvents || "[]"), // Carregar os eventos no calendário
+          ...option,
         };
-      }
-    });
+        console.log(this.calendarOptions);
+        const calendarApi = this.calendarComponent.getApi();
+        calendarApi.render();
+        // if (calendarEvents) {
+        //   let event = JSON.parse(calendarEvents);
+        //   if(event.length > 0) {
+        //     event = event.filter((event: any) => event.idFormation === formacaoId);
+        //     calendarEvents = JSON.stringify(event);
+        //   }
+
+        //   console.log(calendarEvents);
+
+        //   // Atualizar as opções do calendário com os eventos carregados
+        //   this.calendarOptions = {
+        //     initialView: "dayGridMonth",
+        //     plugins: [dayGridPlugin, interactionPlugin],
+        //     ...JSON.parse(event?.length == 0 ? "{}" : calendarConfig || "{}"),
+        //     events: JSON.parse(calendarEvents || "[]"), // Carregar os eventos no calendário
+        //   };
+
+        // }
+      });
   }
 }

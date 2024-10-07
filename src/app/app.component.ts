@@ -4,7 +4,6 @@ import { AuthService } from './Services/auth.service'; // Correct the path to se
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-
 @Component({
   selector: 'app-root',
   standalone: true,

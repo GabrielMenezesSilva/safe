@@ -27,7 +27,7 @@
     "@fullcalendar/core": "^6.1.15",
     "@fullcalendar/daygrid": "^6.1.15",
     "@fullcalendar/interaction": "^6.1.15",
-    "@ionic/angular": "^8.3.1",
+    "@ionic/angular": "^8.3.2",
     "@sweetalert2/ngx-sweetalert2": "^12.4.0",
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",

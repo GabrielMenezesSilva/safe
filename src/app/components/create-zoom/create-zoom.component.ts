@@ -4,15 +4,15 @@ import { FormControl, FormsModule, NgForm } from "@angular/forms";
 import { FormacaoService } from './formacao.service';
 import { Zoom } from '../../interfaces/zoom';
 import { Formation } from "../../interfaces/formation";
-import { IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonItem, IonLabel, IonButton, IonList, IonSelectOption, IonDatetimeButton, IonModal, IonDatetime } from "@ionic/angular/standalone";
+import { IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonItem, IonLabel, IonButton, IonList, IonSelectOption, IonDatetimeButton, IonModal, IonDatetime, IonSelect, IonInput } from "@ionic/angular/standalone";
 
 @Component({
   selector: "app-create-zoom",
   standalone: true,
-  imports: [IonDatetime, IonModal, IonDatetimeButton, 
+  imports: [IonInput, IonDatetime, IonModal, IonDatetimeButton, 
     IonSelectOption, IonList, IonButton, IonLabel, IonItem, IonCardContent, 
     IonCardTitle, IonCardHeader, IonCard, IonContent, IonTitle, IonToolbar, 
-    IonHeader, CommonModule, FormsModule,
+    IonHeader, CommonModule, FormsModule,IonSelect
   ],
   templateUrl: "./create-zoom.component.html",
   styleUrls: ["./create-zoom.component.scss"],
