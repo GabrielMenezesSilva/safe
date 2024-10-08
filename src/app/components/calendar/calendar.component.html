@@ -1,27 +1,20 @@
-<div>
-    <div>
-      <form [formGroup]="formacaoForm">
-        <label for="formacao">Sélectionnez une formation:</label>
-        <select id="formacao" formControlName="formacao">
-          <option *ngFor="let formacao of formacoes" [value]="formacao.id">{{ formacao.nome }}</option>
-        </select>
-      </form>
-    </div>
-  
-    <div *ngIf="aulas.length > 0">
-      <h3>Cours pour la formation sélectionnée:</h3>
-      <ul>
-        <li *ngFor="let aula of aulas">
-          <strong>{{ aula.title }}</strong> - {{ aula.start }} à {{ aula.end }}<br>
-          <em>{{ aula.description }}</em><br>
-          <small>Professeur: {{ aula.extendedProps.professor }}</small>
-        </li>
-      </ul>
-    </div>
-    <div *ngIf="aulas.length === 0">
-      <p>Aucun cours trouvé pour la formation sélectionnée.</p>
-    </div>
+<ion-content class="ion-padding">
+  <h2 class="ion-text-center">Calendário de Aulas</h2>
+
+  <!-- Seleção de Formação -->
+  <form [formGroup]="formacaoForm">
+    <ion-item>
+      <ion-label position="floating">Selecione a Formação:</ion-label>
+      <ion-select formControlName="formacao">
+        <ion-select-option *ngFor="let formacao of formacoes" [value]="formacao.id">
+          {{ formacao.nome }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+  </form>
+
+  <!-- FullCalendar -->
+  <div *ngIf="calendarOptions" class="calendar">
+    <full-calendar [options]="calendarOptions"></full-calendar>
   </div>
-  <div class="calendar">
-    <full-calendar #calendar [options]="calendarOptions"></full-calendar>
-    </div>
+</ion-content>

@@ -41,6 +41,7 @@
         <!-- Captura apenas a data -->
         <ion-datetime
           id="datetime1"
+          presentation="date"
           formControlName="dataInicio"
           formControlName="horaInicio"
         ></ion-datetime>
@@ -57,6 +58,7 @@
         <!-- Captura apenas a data -->
         <ion-datetime
           id="datetime2"
+          presentation="date"
           formControlName="dataFim"
           formControlName="horaFim"
         ></ion-datetime>
@@ -97,6 +99,16 @@
     >
       Ajouter un Planing
     </ion-button>
+    <ion-button
+      color="secondary"
+      fill="solid"
+      expand="block"
+      type="submit"
+      (click)="send()"
+    >
+      Envoyer
+    </ion-button>
+
   </form>
 
   <!-- FullCalendar -->

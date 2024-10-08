@@ -61,10 +61,12 @@ export class CreateCalendarComponent implements OnInit {
     locale: "fr",
     timeZone: "UTC",
     eventResizableFromStart: true,
-    editable: true,
+    editable: true, // Permitir que outros eventos sejam editáveis
     eventDurationEditable: true,
     droppable: true,
-    
+
+    // Adicionando eventos de feriados
+    events: [], // Inicialmente vazio, será preenchido no ngOnInit
 
     // Função para criação de eventos
     select: this.onSelect.bind(this),
@@ -74,6 +76,24 @@ export class CreateCalendarComponent implements OnInit {
   };
 
   formacoes: any[] = [];
+
+  // Lista de feriados na Suíça para 2024
+  feriados = [
+    { title: 'Ano Novo', date: '2024-01-01' },
+    { title: 'Sexta-feira Santa', date: '2024-03-29' },
+    { title: 'Páscoa', date: '2024-03-31' },
+    { title: 'Segunda-feira de Páscoa', date: '2024-04-01' },
+    { title: 'Dia do Trabalho', date: '2024-05-01' },
+    { title: 'Dia da Ascensão', date: '2024-05-09' },
+    { title: 'Pentecostes', date: '2024-05-19' },
+    { title: 'Segunda-feira de Pentecostes', date: '2024-05-20' },
+    { title: 'Feriado Nacional da Suíça', date: '2024-08-01' },
+    { title: 'Assunção de Maria', date: '2024-08-15' },
+    { title: 'Dia da Reforma', date: '2024-10-31' },
+    { title: 'Dia de Todos os Santos', date: '2024-11-01' },
+    { title: 'Natal', date: '2024-12-25' },
+    { title: 'Boxing Day', date: '2024-12-26' }
+  ];
 
   constructor(
     private fb: FormBuilder,
@@ -112,12 +132,20 @@ export class CreateCalendarComponent implements OnInit {
       this.aulaForm.patchValue({ formacao: formacaoSelecionada });
       this.loadAulas(formacaoSelecionada);
     }
+
+    // Adiciona os feriados ao calendário
+    this.calendarOptions.events = [
+      ...this.feriados.map(feriado => ({
+        title: feriado.title,
+        date: feriado.date,
+        editable: false, // Define os feriados como não editáveis
+        allDay: true // Assume que todos os feriados são eventos de dia inteiro
+      }))
+    ]; // Adiciona os feriados à lista de eventos
   }
 
   // Método de criação de eventos
   onSelect(info: any) {
-
-    
     Swal.fire({
       title: "Create new event?",
       html: `
@@ -150,9 +178,19 @@ export class CreateCalendarComponent implements OnInit {
       }
     });
   }
-  
+
   // Método de exclusão de eventos
   onEventClick(info: any) {
+    // Verifica se o evento é um feriado
+    if (this.feriados.some(feriado => feriado.date === info.event.startStr)) {
+      Swal.fire({
+        text: "Este é um feriado e não pode ser deletado.",
+        icon: "warning",
+        heightAuto: false,
+      });
+      return; // Não permite a exclusão
+    }
+
     Swal.fire({
       text: "Are you sure you want to delete this event?",
       icon: "warning",
@@ -165,7 +203,6 @@ export class CreateCalendarComponent implements OnInit {
         info.event.remove();
       }
     });
-    
   }
 
   adicionarAula() {
@@ -201,5 +238,12 @@ export class CreateCalendarComponent implements OnInit {
     this.calendarService.getAulasByFormacao(formacaoId).subscribe((aulas) => {
       this.calendarOptions.events = aulas;
     });
+  }
+
+  // Método para enviar todas as aulas para o localStorage e redirecionar para a página de visualização
+  send() {
+    const calendarApi = this.calendarComponent.getApi();
+    const events = calendarApi.getEvents();
+    localStorage.setItem("events", JSON.stringify(events));
   }
 }
