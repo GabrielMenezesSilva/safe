@@ -1,8 +1,11 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ViewChild } from "@angular/core";
 import { FormBuilder, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { CalendarService } from "../../Services/calendar.service";
-import { CommonModule } from "@angular/common";
-import { FullCalendarModule } from "@fullcalendar/angular";
+import { CommonModule, JsonPipe } from "@angular/common";
+import {
+  FullCalendarComponent,
+  FullCalendarModule,
+} from "@fullcalendar/angular";
 import { CalendarOptions } from "@fullcalendar/core";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
@@ -11,6 +14,7 @@ import {
   IonItem,
   IonSelectOption,
   IonContent,
+  IonSelect,
 } from "@ionic/angular/standalone";
 
 @Component({
@@ -24,16 +28,17 @@ import {
     CommonModule,
     FullCalendarModule,
     IonSelectOption,
+    IonSelect,
   ],
   templateUrl: "./calendar.component.html",
   styleUrls: ["./calendar.component.css"],
 })
 export class CalendarComponent implements OnInit {
+  @ViewChild("calendar") calendarComponent!: FullCalendarComponent;
   formacaoForm: FormGroup;
   formacoes: any[] = [];
   aulas: any[] = [];
   calendarOptions: CalendarOptions | undefined;
-
   constructor(
     private fb: FormBuilder,
     private calendarService: CalendarService
@@ -59,11 +64,17 @@ export class CalendarComponent implements OnInit {
     this.calendarService.getAulasByFormacao(formacaoId).subscribe((aulas) => {
       this.aulas = aulas;
 
+      const calendarConfig = localStorage.getItem("calendarOptions");
+      const calendarEvents = localStorage.getItem("events");
+      console.log(calendarConfig);
+      console.log(calendarEvents);
+
       // Atualizar as opções do calendário com os eventos carregados
       this.calendarOptions = {
         initialView: "dayGridMonth",
         plugins: [dayGridPlugin, interactionPlugin],
-        events: aulas, // Carregar os eventos no calendário
+        ...JSON.parse(calendarConfig || "{}"),
+        events: JSON.parse(calendarEvents || "[]"), // Carregar os eventos no calendário
       };
     });
   }
