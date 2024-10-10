@@ -1,38 +1,27 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { CreateChatComponent } from "./components/create-chat/create-chat.component";
-import { CreateUserComponent } from "./components/create-user/create-user.component";
-import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { MatListModule } from '@angular/material/list';
-import { RouterModule } from '@angular/router';
+import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { MenuController, IonicModule } from '@ionic/angular';
+import { AuthService } from './Services/auth.service'; // Correct the path to services
+import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { AuthService } from './Services/auth.service';  
-import { NavbarComponent } from './navbar/navbar.component';
-
+import { RouterModule } from '@angular/router';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [
-    CommonModule,  
-    MatSidenavModule,
-    MatToolbarModule,
-    MatIconModule,
-    MatButtonModule,
-    MatListModule,
-    RouterModule,
-    RouterOutlet,
-    CreateChatComponent,
-    CreateUserComponent,
-    NavbarComponent
-  ],
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  imports: [FormsModule, CommonModule, IonicModule, RouterModule], // Import RouterModule
+  templateUrl: 'app.component.html',
+  styleUrls: ['app.component.scss'],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA] // Add CUSTOM_ELEMENTS_SCHEMA to handle ion-* elements
 })
 export class AppComponent {
-  title = 'SMSNomades';
+  constructor(private menu: MenuController, public authService: AuthService) {}
 
-  constructor(public authService: AuthService) {}
+  // Method to close the menu
+  closeMenu() {
+    this.menu.close();
+  }
+
+  // Logout method
+  logout() {
+    this.authService.logout();
+  }
 }

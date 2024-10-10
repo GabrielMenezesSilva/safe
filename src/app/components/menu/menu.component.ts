@@ -1,14 +1,14 @@
-// menu.component.ts
-import { Component } from '@angular/core';
-import { AuthService } from '../../Services/auth.service'; // Assurez-vous que le chemin est correct
-import { CommonModule } from '@angular/common';
+import { Component } from "@angular/core";
+import { AuthService } from "../../Services/auth.service"; // Assurez-vous que le chemin est correct
+import { CommonModule } from "@angular/common";
+import { IonApp } from "@ionic/angular/standalone";
 
 @Component({
-  selector: 'app-menu',
-  templateUrl: './menu.component.html',
-  styleUrls: ['./menu.component.css'],
+  selector: "app-menu",
+  templateUrl: "./menu.component.html",
+  styleUrls: ["./menu.component.css"],
   standalone: true,
-  imports: [CommonModule]
+  imports: [IonApp, CommonModule],
 })
 export class MenuComponent {
   constructor(private authService: AuthService) {}

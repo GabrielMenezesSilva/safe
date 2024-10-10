@@ -1,47 +1,68 @@
 import { Component, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { FormsModule } from "@angular/forms";
+import { FormControl, FormsModule, NgForm } from "@angular/forms";
 import { FormacaoService } from './formacao.service';
+import { Zoom } from '../../interfaces/zoom';
+import { Formation } from "../../interfaces/formation";
+import { IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonItem, IonLabel, IonButton, IonList, IonSelectOption, IonDatetimeButton, IonModal, IonDatetime, IonSelect, IonInput } from "@ionic/angular/standalone";
 
 @Component({
   selector: "app-create-zoom",
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [IonInput, IonDatetime, IonModal, IonDatetimeButton, 
+    IonSelectOption, IonList, IonButton, IonLabel, IonItem, IonCardContent, 
+    IonCardTitle, IonCardHeader, IonCard, IonContent, IonTitle, IonToolbar, 
+    IonHeader, CommonModule, FormsModule,IonSelect
+  ],
   templateUrl: "./create-zoom.component.html",
-  styleUrls: ["./create-zoom.component.css"],
+  styleUrls: ["./create-zoom.component.scss"],
 })
 export class CreateZoomComponent implements OnInit {
-  nouveauLien: string = ''; // Nouveau lien pour la formation
-  codigoAcesso: string = ''; // Code d'accès pour la formation
-  data: string = ''; // Date de la formation
-  selectedFormacaoToAddLink: any; // Formation sélectionnée pour ajouter un lien
-  selectedFormacaoToShowAulas: any; // Formation sélectionnée pour afficher les cours
-  formacoes: any[] = []; // Liste des formations
+  novoLink: string = '';
+  codigoAcesso: string = '';
+  data: string = '';
+  selectedFormacaoToAddLink: Formation | null = null;
+  selectedFormacaoToShowAulas: Formation | null = null;
+  zoomsToShowByFormation: Zoom[] = [];
+  formacoes: Formation[] = [];
+  zooms: Zoom[] = [];
+  formationIdSelected: string = '';
 
   constructor(private formacaoService: FormacaoService) {}
 
   ngOnInit() {
-    this.formacaoService.loadFromLocalStorage(); // Charger les formations depuis le stockage local
-    this.formacaoService.formacoes$.subscribe(formacoes => this.formacoes = formacoes); // Souscrire aux formations pour les mettre à jour
+    this.formacaoService.getFormation().subscribe((formacoes: Formation[]) => {
+      this.formacoes = formacoes;
+    });
   }
 
-  ajouterLien() {
-    if (this.selectedFormacaoToAddLink && this.nouveauLien && this.data) {
-      const novoNome = `${this.selectedFormacaoToAddLink.nome} - ${this.data}`; // Nouveau nom pour l'enregistrement
-      const novoEnregistrement = {
-        nome: novoNome,
-        link: this.nouveauLien,
-        codigoAcesso: this.codigoAcesso,
-        data: this.data
-      }; // Nouvel enregistrement à ajouter
-      this.selectedFormacaoToAddLink.enregistrements.push(novoEnregistrement); // Ajouter le nouvel enregistrement à la formation sélectionnée
-      this.formacaoService.updateFormacoes(this.formacoes); // Mettre à jour la liste des formations
-      // Effacer les champs après avoir ajouté le lien
-      this.nouveauLien = '';
-      this.codigoAcesso = '';
-      this.data = '';
+  getZooms() {
+    const id = this.selectedFormacaoToShowAulas?.id;
+    this.formacaoService.getZoomByIdFormation(id).subscribe((zooms: Zoom[]) => {
+      this.zoomsToShowByFormation = zooms;
+    });
+  }
+
+  adicionarLink() {
+    console.log(this.selectedFormacaoToAddLink);
+    
+    if (this.selectedFormacaoToAddLink && this.novoLink && this.data) {
+      const novoNome = `${this.selectedFormacaoToAddLink.name} - ${this.data}`;
+      const novoRegistro: Zoom = {
+        lien: this.novoLink,
+        code: this.codigoAcesso,
+        date: this.data,
+        formationStr: this.selectedFormacaoToAddLink.name,
+        idFormation: this.selectedFormacaoToAddLink.id,
+      };
+
+      this.formacaoService.addFormacao(Date.now().toString(), novoRegistro).subscribe(() => {        
+        this.novoLink = '';
+        this.codigoAcesso = '';
+        this.data = '';
+      });
     } else {
-      alert('Por favor, preencha todos os campos.'); // Alerte si tous les champs ne sont pas remplis
+      alert('Por favor, preencha todos os campos.');
     }
   }
 }
